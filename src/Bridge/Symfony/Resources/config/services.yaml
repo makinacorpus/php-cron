@@ -1,0 +1,28 @@
+services:
+    MakinaCorpus\Cron\CronRunner:
+        arguments: ['@cron.task_registry', '@cron.task_state_store', '@cron.argument_resolver']
+
+    cron.argument_resolver:
+        class: MakinaCorpus\ArgumentResolver\DefaultArgumentResolver
+        tags: [{ name: custom.argument_resolver, id: cron }]
+
+    cron.task_registry.array:
+        class: MakinaCorpus\Cron\TaskRegistry\ArrayTaskRegistry
+        arguments: [[]]
+
+    cron.task_registry.container:
+        class: MakinaCorpus\Cron\TaskRegistry\ContainerTaskRegistry
+        arguments: [[]] # Will be replaced by a compiler pass.
+
+    cron.task_registry:
+        alias: cron.task_registry.container
+    MakinaCorpus\Cron\TaskRegistry:
+        alias: cron.task_registry
+
+    cron.task_state_store.array:
+        class: MakinaCorpus\Cron\TaskStateStore\ArrayTaskStateStore
+
+    cron.task_state_store:
+        alias: cron.task_state_store.array
+    MakinaCorpus\Cron\TaskStateStore:
+        alias: cron.task_state_store

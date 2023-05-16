@@ -1,0 +1,7 @@
+services:
+    MakinaCorpus\Cron\Bridge\Symfony\Command\CronDisableAllCommand:
+        autowire: true
+        tags: ['console.command']
+    MakinaCorpus\Cron\Bridge\Symfony\Command\CronRunCommand:
+        autowire: true
+        tags: ['console.command']
