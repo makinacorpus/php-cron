@@ -34,7 +34,9 @@ example.
 
  - [ ] `makinacorpus/goat-query` state store implementation,
  - [ ] `PDO` state store implementation,
- - [ ] logging using `psr/log` everywhere,
+ - [ ] unit test Symfony integration,
+ - [ ] logging using `psr/log` everything everywhere,
+ - [ ] add scheduler implementation using `dragonmantank/cron-expression`,
  - [ ] meaningful information display via console commands.
 
 # How to use
