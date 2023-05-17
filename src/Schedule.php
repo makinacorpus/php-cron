@@ -11,6 +11,8 @@ namespace MakinaCorpus\Cron;
  */
 interface Schedule
 {
+    const INTERVAL_SEPARATOR = '~';
+
     /**
      * Is the given date satisfied by.
      */
@@ -25,6 +27,11 @@ interface Schedule
      * Get minimum interval between two runs.
      */
     public function getMinInterval(): ?\DateInterval;
+
+    /**
+     * String representation of interval string.
+     */
+    public function getMinIntervalString(): ?string;
 
     /**
      * Get string representation (without interval).

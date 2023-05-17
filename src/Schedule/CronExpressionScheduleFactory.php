@@ -10,14 +10,15 @@ use MakinaCorpus\Cron\ScheduleFactory;
 
 class CronExpressionScheduleFactory implements ScheduleFactory
 {
+    use ScheduleFactoryTrait;
+
     /**
      * {@inheritdoc}
      */
     public function fromString(string $spec, ?string $minIntervalSpec = null): Schedule
     {
-        return new CronExpressionSchedule(
-            new CronExpression($spec),
-            $minIntervalSpec ? new \DateInterval($minIntervalSpec) : null
-        );
+        list ($spec, $minInterval) = $this->separateSpecAndInterval($spec, $minIntervalSpec);
+
+        return new CronExpressionSchedule(new CronExpression($spec), $minInterval);
     }
 }

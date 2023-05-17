@@ -20,8 +20,33 @@ class DefaultSchedule implements Schedule
     ) {
     }
 
+    public function getMinuteOfHour(): ?int
+    {
+        return $this->minuteOfHour;
+    }
+
+    public function getHourOfDay(): ?int
+    {
+        return $this->hourOfDay;
+    }
+
+    public function getDayOfMonth(): ?int
+    {
+        return $this->dayOfMonth;
+    }
+
+    public function getMonthOfYear(): ?int
+    {
+        return $this->monthOfYear;
+    }
+
+    public function getDayOfWeek(): ?int
+    {
+        return $this->dayOfWeek;
+    }
+
     /**
-     * Is the given date satisfied by.
+     * {@inheritdoc}
      */
     public function isStatisfiedBy(\DateTimeInterface $date, ?\DateTimeInterface $previous = null, ?int $fuzzy = null): bool
     {
@@ -61,6 +86,9 @@ class DefaultSchedule implements Schedule
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isEmpty(): bool
     {
         return
@@ -72,33 +100,43 @@ class DefaultSchedule implements Schedule
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getMinInterval(): ?\DateInterval
     {
         return $this->minInterval;
     }
 
     /**
-     * Get string representation (without interval).
+     * {@inheritdoc}
+     */
+    public function getMinIntervalString(): ?string
+    {
+        return $this->minInterval ? $this->intervalToString($this->minInterval) : null;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function toString(bool $withInterval = false): string
     {
-        $data = [
+        $ret = \implode(' ', [
             $this->minuteOfHour ?? '*',
             $this->hourOfDay ?? '*',
             $this->dayOfMonth ?? '*',
             $this->monthOfYear ?? '*',
             $this->dayOfWeek ?? '*',
-        ];
+        ]);
 
         if ($withInterval && $this->minInterval) {
-            $data[] = $this->intervalToString($this->minInterval);
+            return \sprintf('%s %s %s', $ret, Schedule::INTERVAL_SEPARATOR, $this->intervalToString($this->minInterval));
         }
-
-        return \implode(' ', $data);
+        return $ret;
     }
 
     /**
-     * Alias of toString().
+     * {@inheritdoc}
      */
     public function __toString(): string
     {

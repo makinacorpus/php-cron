@@ -49,22 +49,23 @@ class GoatQueryTaskStateStore implements TaskStateStore
      */
     public function register(Task $task): TaskState
     {
-        $this->checkTable();
-
-        return $this
-            ->runner
-            ->getQueryBuilder()
-            ->merge($this->tableExpression())
-            ->setKey(['id'])
-            ->values([
-                'id' => $task->getId(),
-                'schedule' => $task->getDefaultSchedule()->toString(true),
-            ])
-            ->returning('*')
-            ->execute()
-            ->setHydrator($this->hydrator())
-            ->fetch()
-        ;
+        try {
+            return $this->get($task->getId());
+        } catch (CronTaskDoesNotExistError $e) {
+            return $this
+                ->runner
+                ->getQueryBuilder()
+                ->insert($this->tableExpression())
+                ->values([
+                    'id' => $task->getId(),
+                    'schedule' => $task->getDefaultSchedule()->toString(true),
+                ])
+                ->returning('*')
+                ->execute()
+                ->setHydrator($this->hydrator())
+                ->fetch()
+            ;
+        }
     }
 
     /**
@@ -84,7 +85,7 @@ class GoatQueryTaskStateStore implements TaskStateStore
     {
         $this->get($id);
 
-        $this->runner->execute("UPDATE ? SET schedule = ? WHERE id = ?", [$this->tableExpression(), $schedule->toString(), $id]);
+        $this->runner->execute("UPDATE ? SET schedule = ? WHERE id = ?", [$this->tableExpression(), $schedule->toString(true), $id]);
     }
 
     /**

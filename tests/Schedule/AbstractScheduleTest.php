@@ -14,7 +14,11 @@ abstract class AbstractScheduleTest extends TestCase
     public function testFromStringWithAliases(): void
     {
         $tested = $this->getFactory()->fromString('@yearly', 'P1DT2M');
-        self::assertSame('0 0 1 1 * P1DT2M', $tested->toString(true));
+        self::assertSame('0 0 1 1 * ~ P1DT2M', $tested->toString(true));
+        self::assertSame('0 0 1 1 *', $tested->toString());
+
+        $tested = $this->getFactory()->fromString('@yearly ~ P1DT2M');
+        self::assertSame('0 0 1 1 * ~ P1DT2M', $tested->toString(true));
         self::assertSame('0 0 1 1 *', $tested->toString());
 
         $tested = $this->getFactory()->fromString('@annually');
@@ -71,7 +75,7 @@ abstract class AbstractScheduleTest extends TestCase
 
     public function testIsSpecifiedByWithPrevious(): void
     {
-        $tested = $this->getFactory()->fromString('* * * 5 *', 'PT10M');
+        $tested = $this->getFactory()->fromString('* * * 5 * ~ PT10M');
         $previous = new \DateTimeImmutable('2023-05-15 15:45:00');
 
         $date = new \DateTimeImmutable('2023-05-15 15:50:00');

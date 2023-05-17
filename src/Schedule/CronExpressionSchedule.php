@@ -67,12 +67,20 @@ class CronExpressionSchedule implements Schedule
     /**
      * {@inheritdoc}
      */
+    public function getMinIntervalString(): ?string
+    {
+        return $this->minInterval ? $this->intervalToString($this->minInterval) : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function toString(bool $withInterval = false): string
     {
         $ret = (string) $this->cronExpression->getExpression();
 
         if ($withInterval && $this->minInterval) {
-            return $ret . ' ' . $this->intervalToString($this->minInterval);
+            return \sprintf('%s %s %s', $ret, Schedule::INTERVAL_SEPARATOR, $this->intervalToString($this->minInterval));
         }
         return $ret;
     }

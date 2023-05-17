@@ -10,13 +10,14 @@ use MakinaCorpus\Cron\Error\InvalidCronSpecificationError;
 
 class DefaultScheduleFactory implements ScheduleFactory
 {
+    use ScheduleFactoryTrait;
+
     /**
      * {@inheritdoc}
      */
     public function fromString(string $spec, ?string $minIntervalSpec = null): Schedule
     {
-        $minInterval = $minIntervalSpec ? new \DateInterval($minIntervalSpec) : null;
-        $spec = \trim($spec);
+        list ($spec, $minInterval) = $this->separateSpecAndInterval($spec, $minIntervalSpec);
 
         $spec = match ($spec) {
             "@yearly" => "0 0 1 1 *",
