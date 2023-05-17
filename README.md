@@ -14,11 +14,11 @@ How it works:
    depending upon your framework, using Symfony a CLI command is provided.
    This tick must run very often, such as every minute.
 
- - When the cron runs, for every registered tasks, it check the task schedule
+ - When the cron runs, for each registered task, it checks its schedule
    againsts the current sytem date.
 
- - For matching task, it checks first for the configured minimum delay
-   between two run and excludes those which have been run too recently.
+ - For each matching schedule, it checks first for the configured minimum
+   delay between two run and excludes tasks which have been run too recently.
 
  - For each remaining non excluded task, it runs it, and store the latest
    run data long error message and error trace if any error occured.
@@ -26,26 +26,23 @@ How it works:
 Simply put, it takes a task list, test each task schedule against current date,
 and run it when it matches.
 
-Task schedule is a standard POSIX cron schedule string, except that it only
-accepts single digit units. It's more than enough for our use case at the time,
-but it will later be extended to a more complete implementation.
+State is per default kept in memory during runtime, then discarded. Future
+implementations will allow you to store it within PDO and maybe other
+backends.
 
-State store knows nothing about schedule, and store it as a simple string,
-which makes the schedule instance pluggable and replaceable, which means that
-it's possible for users to plug `dragonmantank/cron-expression` instead for
-example.
+State when persisted allows the user to change task schedule without changing
+the code. Schedule is always stored as a raw string which allows alternative
+implementations to exist.
 
-Per default, state is in memory, which means that nothing gets really stored,
-in a near future, mutiple state store implementations will be provided.
-
-State store also stores the task schedule, which allow users to reconfigure
-it without changing the code. Tasks can also be enabled or disabled.
+Default schedule implementation accepts incomplete POSIX cron expression but
+only with single digit values. An alternative implementation can use
+`dragonmantank/cron-expression` for a more complete POSIX cron expression.
 
 # Roadmap
 
  - [ ] `makinacorpus/goat-query` state store implementation,
  - [ ] `PDO` state store implementation,
- - [ ] unit test Symfony integration,
+ - [x] unit test Symfony integration,
  - [ ] logging using `psr/log` everything everywhere,
  - [x] add scheduler implementation using `dragonmantank/cron-expression`,
  - [ ] cron task list and detailed information restitution command,
