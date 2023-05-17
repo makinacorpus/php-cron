@@ -50,7 +50,7 @@ class Task
         return $this->name;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         if (null === $this->description) {
             $this->initialize();
