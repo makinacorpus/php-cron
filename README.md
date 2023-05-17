@@ -47,7 +47,7 @@ it without changing the code. Tasks can also be enabled or disabled.
  - [ ] `PDO` state store implementation,
  - [ ] unit test Symfony integration,
  - [ ] logging using `psr/log` everything everywhere,
- - [ ] add scheduler implementation using `dragonmantank/cron-expression`,
+ - [x] add scheduler implementation using `dragonmantank/cron-expression`,
  - [ ] cron task list and detailed information restitution command,
  - [ ] meaningful information display via console commands.
 
@@ -203,6 +203,36 @@ services:
 And that's it.
 
 # Usage
+
+## Configuring schedule implementation
+
+### Default implementation
+
+Default implementation if configuration is left untouched supports incomplete
+POSIX cron expressions, where parts can only be single digits.
+
+For a lot of applications, this is more than enough.
+
+You don't need to configure anything since this is the default.
+
+### dragonmantank/cron-expression
+
+First install it:
+
+```sh
+composer require dragonmantank/cron-expression
+```
+
+Then, during your application bootstrap, call:
+
+```php
+use MakinaCorpus\Cron\ScheduleFactoryRegistry;
+use MakinaCorpus\Cron\Schedule\CronExpressionScheduleFactory;
+
+ScheduleFactoryRegistry::set(new CronExpressionScheduleFactory());
+```
+
+And use this API as you would normally do.
 
 ## Commands
 

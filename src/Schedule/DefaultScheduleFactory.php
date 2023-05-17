@@ -84,9 +84,6 @@ class DefaultScheduleFactory implements ScheduleFactory
                     if (0 > $value || 7 < $value) {
                         throw new InvalidCronSpecificationError(\sprintf("Invalid cron specification '%s': part %s must be between 0 and 7", $spec, $name));
                     }
-                    if (0 === $value) {
-                        $value = 7;
-                    }
                     break;
             }
 
