@@ -65,7 +65,7 @@ class ContainerTaskRegistry implements TaskRegistry
             };
             return new Task($callback);
         }
-        throw new CronTaskDoesNotExistError(\sprintf("Cron task '%s' does not exist.", $id));
+        throw CronTaskDoesNotExistError::create($id);
     }
 
     /**

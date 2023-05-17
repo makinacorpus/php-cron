@@ -35,7 +35,7 @@ class ArrayTaskRegistry implements TaskRegistry
      */
     public function get(string $id): Task
     {
-        return $this->instances[$id] ?? throw new CronTaskDoesNotExistError(\sprintf("Cron task '%s' does not exist.", $id));
+        return $this->instances[$id] ?? throw CronTaskDoesNotExistError::create($id);
     }
 
     /**

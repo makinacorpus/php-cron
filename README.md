@@ -40,7 +40,7 @@ only with single digit values. An alternative implementation can use
 
 # Roadmap
 
- - [ ] `makinacorpus/goat-query` state store implementation,
+ - [x] `makinacorpus/goat-query` state store implementation,
  - [ ] `PDO` state store implementation,
  - [x] unit test Symfony integration,
  - [ ] logging using `psr/log` everything everywhere,

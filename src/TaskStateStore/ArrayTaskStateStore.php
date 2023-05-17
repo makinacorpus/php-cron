@@ -24,7 +24,7 @@ class ArrayTaskStateStore implements TaskStateStore
      */
     public function get(string $id): TaskState
     {
-        return $this->store[$id] ?? throw new CronTaskDoesNotExistError(\sprintf("Task '%s' does not exist.", $id));
+        return $this->store[$id] ?? throw CronTaskDoesNotExistError::create($id);
     }
 
     /**

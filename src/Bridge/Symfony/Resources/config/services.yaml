@@ -21,10 +21,7 @@ services:
     MakinaCorpus\Cron\TaskRegistry:
         alias: cron.task_registry
 
-    cron.task_state_store.array:
-        class: MakinaCorpus\Cron\TaskStateStore\ArrayTaskStateStore
-
     cron.task_state_store:
-        alias: cron.task_state_store.array
+        class: MakinaCorpus\Cron\TaskStateStore\ArrayTaskStateStore
     MakinaCorpus\Cron\TaskStateStore:
         alias: cron.task_state_store
