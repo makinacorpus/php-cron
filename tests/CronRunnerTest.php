@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\Cron\Tests;
 
+use MakinaCorpus\ArgumentResolver\DefaultArgumentResolver;
+use MakinaCorpus\ArgumentResolver\Context\ResolverContext;
+use MakinaCorpus\ArgumentResolver\Metadata\ArgumentMetadata;
+use MakinaCorpus\ArgumentResolver\Resolver\ArgumentValueResolver;
 use MakinaCorpus\Cron\CronRunner;
 use MakinaCorpus\Cron\CronTask;
 use MakinaCorpus\Cron\TaskRegistry\ArrayTaskRegistry;
@@ -12,6 +16,70 @@ use PHPUnit\Framework\TestCase;
 
 class CronRunnerTest extends TestCase
 {
+    public function testForce(): void
+    {
+        $canary = false;
+
+        $taskRegistry = new ArrayTaskRegistry([
+            #[CronTask(id: 'foo', schedule: '* * 1 * *')]
+            function () use (&$canary) {
+                $canary = true;
+            }
+        ]);
+
+        $tested = new CronRunner($taskRegistry, new ArrayTaskStateStore());
+
+        $tested->run(new \DateTimeImmutable('2023-05-16 00:00:00'));
+        self::assertFalse($canary);
+
+        $tested->force('foo');
+        self::assertTrue($canary);
+    }
+
+    public function testForceRaiseErrors(): void
+    {
+        $taskRegistry = new ArrayTaskRegistry([
+            #[CronTask(id: 'foo', schedule: '* * 1 * *')]
+            fn () => throw new \DomainException("This is an exception")
+        ]);
+
+        $tested = new CronRunner($taskRegistry, new ArrayTaskStateStore());
+
+        self::expectExceptionMessage("This is an exception");
+        $tested->force('foo');
+    }
+
+    public function testArgumentResolver(): void
+    {
+        $canary = null;
+
+        $taskRegistry = new ArrayTaskRegistry([
+            #[CronTask(id: 'foo', schedule: '* * 1 * *')]
+            function (int $foo) use (&$canary) {
+                $canary = $foo;
+            }
+        ]);
+
+        $argumentResolver = new DefaultArgumentResolver(null, [
+            new class () implements ArgumentValueResolver
+            {
+                public function supports(ArgumentMetadata $argument, ResolverContext $context): bool
+                {
+                    return true;
+                }
+
+                public function resolve(ArgumentMetadata $argument, ResolverContext $context): iterable
+                {
+                    yield 12;
+                }
+            }
+        ]);
+
+        $tested = new CronRunner($taskRegistry, new ArrayTaskStateStore(), $argumentResolver);
+        $tested->force('foo');
+        self::assertSame(12, $canary);
+    }
+
     public function testRun(): void
     {
         $canary = false;
