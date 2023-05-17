@@ -6,12 +6,17 @@ namespace MakinaCorpus\Cron;
 
 use MakinaCorpus\ArgumentResolver\ArgumentResolver;
 use MakinaCorpus\Cron\TaskStateStore\ArrayTaskStateStore;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Where the magic happens: run them all.
  */
-class CronRunner
+class CronRunner implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private TaskStateStore $taskStateStore;
 
     public function __construct(
@@ -20,6 +25,7 @@ class CronRunner
         private ?ArgumentResolver $argumentResolver = null
     ) {
         $this->taskStateStore = $taskStateStore ?? new ArrayTaskStateStore();
+        $this->logger = new NullLogger();
     }
 
     public function force(string $id): void

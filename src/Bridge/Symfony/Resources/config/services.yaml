@@ -1,6 +1,8 @@
 services:
     MakinaCorpus\Cron\CronRunner:
         arguments: ['@cron.task_registry', '@cron.task_state_store', '@cron.argument_resolver']
+        calls: [[setLogger, ['@logger']]]
+        tags: [{ name: "monolog.logger", channel: "cron" }]
 
     cron.argument_resolver:
         class: MakinaCorpus\ArgumentResolver\DefaultArgumentResolver
