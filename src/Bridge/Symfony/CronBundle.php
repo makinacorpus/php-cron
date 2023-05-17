@@ -12,6 +12,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * @codeCoverageIgnore
+ */
 final class CronBundle extends Bundle
 {
     /**

@@ -6,6 +6,7 @@ namespace MakinaCorpus\Cron\TaskRegistry;
 
 use MakinaCorpus\Cron\Task;
 use MakinaCorpus\Cron\TaskRegistry;
+use MakinaCorpus\Cron\Error\CronConfigurationError;
 use MakinaCorpus\Cron\Error\CronTaskDoesNotExistError;
 use Psr\Container\ContainerInterface;
 
@@ -17,6 +18,11 @@ class ContainerTaskRegistry implements TaskRegistry
 
     public function __construct(private array $services, private ?ContainerInterface $container = null)
     {
+    }
+
+    protected function getContainer(): ContainerInterface
+    {
+        return $this->container ?? throw new CronConfigurationError("Container is not set");
     }
 
     /**
@@ -53,8 +59,8 @@ class ContainerTaskRegistry implements TaskRegistry
     {
         if ($info = ($this->services[$id] ?? null)) {
             $callback = match ($info[0]) {
-                self::TYPE_CLASS_INVOKABLE => $this->container->get($info[1]),
-                self::TYPE_INSTANCE_METHOD => [$this->container->get($info[1]), $info[2]],
+                self::TYPE_CLASS_INVOKABLE => $this->getContainer()->get($info[1]),
+                self::TYPE_INSTANCE_METHOD => [$this->getContainer()->get($info[1]), $info[2]],
                 self::TYPE_STATIC_METHOD => [$info[1], $info[2]],
             };
             return new Task($callback);
