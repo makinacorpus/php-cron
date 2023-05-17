@@ -246,7 +246,7 @@ application:
 crontab -e
 
 # Run every minute
-/symfony/project/path/bin/console cron:run
+* * * * * /symfony/project/path/bin/console cron:run
 ```
 
 You can run it manually as well:
