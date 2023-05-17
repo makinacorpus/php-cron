@@ -6,29 +6,40 @@ How it works:
 
  - You as the library user register callables as being cron tasks, using
    a descriptive attribute.
- - It literally can be any callable, a function anonymous or not, an instance
-   method or a class static method.
- - You need to setup a tick for running the cron running, depending upon your
-   framework, using Symfony a CLI command is provided. This tick must run very
-   often, such as every minute or so.
- - When the cron runs, for every registered tasks, it checks if the current
-   date matches the task schedule.
- - For schedule matching task, it checks first for the configured minimum delay
+
+ - It can be any callable, a function, an anonymous function, an instance
+   method, a class static method or an invokable class instance.
+
+ - You need to setup a system cron entry for running the applicative cron,
+   depending upon your framework, using Symfony a CLI command is provided.
+   This tick must run very often, such as every minute.
+
+ - When the cron runs, for every registered tasks, it check the task schedule
+   againsts the current sytem date.
+
+ - For matching task, it checks first for the configured minimum delay
    between two run and excludes those which have been run too recently.
- - For each remaining non excluded task, it runs it, and store the run state.
 
-And that's it. Simply put, it takes a task list, test each task schedule to
-current date, and run it when it matches. Date can be passed as a parameter
-which means it gives you the choice how and when to run it.
+ - For each remaining non excluded task, it runs it, and store the latest
+   run data long error message and error trace if any error occured.
 
-Schedule is a standard POSIX cron schedule, except that it only accepts single
-digit units. It's more than enough for our use case at the time, but later it
-may be extended to accept more.
+Simply put, it takes a task list, test each task schedule against current date,
+and run it when it matches.
+
+Task schedule is a standard POSIX cron schedule string, except that it only
+accepts single digit units. It's more than enough for our use case at the time,
+but it will later be extended to a more complete implementation.
 
 State store knows nothing about schedule, and store it as a simple string,
 which makes the schedule instance pluggable and replaceable, which means that
 it's possible for users to plug `dragonmantank/cron-expression` instead for
 example.
+
+Per default, state is in memory, which means that nothing gets really stored,
+in a near future, mutiple state store implementations will be provided.
+
+State store also stores the task schedule, which allow users to reconfigure
+it without changing the code. Tasks can also be enabled or disabled.
 
 # Roadmap
 
@@ -37,6 +48,7 @@ example.
  - [ ] unit test Symfony integration,
  - [ ] logging using `psr/log` everything everywhere,
  - [ ] add scheduler implementation using `dragonmantank/cron-expression`,
+ - [ ] cron task list and detailed information restitution command,
  - [ ] meaningful information display via console commands.
 
 # How to use
@@ -50,6 +62,8 @@ composer require makinacorpus/cron
 Then proceed with one of the following.
 
 ## Standalone
+
+### Configuring cron tasks
 
 First, create some cron methods:
 
@@ -112,6 +126,8 @@ $taskRegistry = new ArrayTaskRegistry([
 ]);
 ```
 
+### Running it
+
 Then, create a runner and execute it, this is basically the piece of code
 you need to have in your CLI script that executes the cron:
 
@@ -132,9 +148,7 @@ Per default, schedule is forgiving, you may run this script only every
 2 or 3 minutes, cron rules will match in a 5 minutes time span after their
 due date to avoid missing running them.
 
-## Use makinacorpus/argument-resolver
-
-## With Symfony
+## Symfony
 
 ### Installing
 
@@ -188,9 +202,15 @@ services:
 
 And that's it.
 
-### Using commands
+# Usage
 
-#### Run all cron tasks (that should run every minute)
+## Commands
+
+Commands are available when using it as a Symfony bundle, but nothing prevents
+you from setting up and using those outside of the Symfony full stack framework
+usage.
+
+### Run all cron tasks (that should run every minute)
 
 Set this in your system cron, or supervisord, or any other orchestrator
 application:
@@ -208,7 +228,7 @@ You can run it manually as well:
 bin/console cron:run
 ```
 
-#### Force run a single cron task
+### Force run a single cron task
 
 Simply call the same command, adding the cron task identifier as first
 argument:
