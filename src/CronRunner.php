@@ -30,11 +30,15 @@ class CronRunner implements LoggerAwareInterface
 
     public function force(string $id): void
     {
+        $this->logger->notice("[cron] Force run of '{task}'", ['task' => $id]);
+
         $this->doRun($this->taskRegistry->get($id), null, true);
     }
 
     public function run(?\DateTimeInterface $at = null): void
     {
+        $this->logger->notice("[cron] Running cron tasks");
+
         $at ??= new \DateTimeImmutable();
         foreach ($this->taskRegistry->all() as $task) {
             $this->doRun($task, $at, false);
@@ -52,10 +56,14 @@ class CronRunner implements LoggerAwareInterface
         $errorMessage = $errorTrace = null;
 
         if ($at && !$state->shouldRun($at)) {
+            $this->logger->debug("[cron] Ignoring task '{task}'", ['task' => $task->getId()]);
+
             return;
         }
 
         try {
+            $this->logger->notice("[cron] Running track '{task}'", ['task' => $task->getId()]);
+
             $callback = $task->getCallback();
             if ($this->argumentResolver) {
                 ($callback)(...$this->argumentResolver->getArguments($callback));
@@ -65,6 +73,9 @@ class CronRunner implements LoggerAwareInterface
         } catch (\Throwable $e) {
             $errorMessage = $e->getMessage();
             $errorTrace = $this->normalizeExceptionTrace($e);
+
+            $this->logger->error("[cron] Error while running task '{task}': '{message}'", ['task' => $task->getId(), 'message' => $errorMessage, 'trace' => $errorTrace]);
+
             if ($raiseErrors) {
                 throw $e;
             }
