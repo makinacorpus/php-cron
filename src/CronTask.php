@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\Cron;
 
+use MakinaCorpus\Cron\Error\CronConfigurationError;
+use MakinaCorpus\Cron\Schedule\ScheduleWithIntervalTrait;
+
 /**
  * Use this attribute on an invokable service class or a service method to
  * define a cron task.
@@ -11,20 +14,33 @@ namespace MakinaCorpus\Cron;
 #[\Attribute(flags: \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
 class CronTask
 {
+    use ScheduleWithIntervalTrait;
+
     public ?Schedule $schedule;
 
     public function __construct(
         public string $id,
         public ?string $name = null,
         public ?string $description = null,
-        null|string|Schedule $schedule = null
+        null|string|Schedule $schedule = null,
+        null|string|\DateInterval $interval = null,
     ) {
-        if (null === $schedule) {
+        if ($schedule) {
+            if ($schedule instanceof Schedule) {
+                if ($interval) {
+                    throw new CronConfigurationError("You cannot pass a %s instance and an interval in the same attribute.", Schedule::class);
+                }
+                $this->schedule = $schedule;
+            } else {
+                if ($interval instanceof \DateInterval) {
+                    $interval = $this->intervalToString($interval);
+                }
+                $this->schedule = ScheduleFactoryRegistry::get()->fromString($schedule, $interval);
+            }
+        } else if ($interval) {
+            throw new CronConfigurationError("You cannot pass an interval value without schedule.", Schedule::class);
+        } else {
             $this->schedule = null;
-        } else if (\is_string($schedule)) {
-            $this->schedule = ScheduleFactoryRegistry::get()->fromString($schedule);
-        } else if ($schedule instanceof Schedule) {
-            $this->schedule = $schedule;
         }
     }
 
