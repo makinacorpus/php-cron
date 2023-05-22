@@ -2,6 +2,12 @@ services:
     MakinaCorpus\Cron\Bridge\Symfony\Command\CronDisableAllCommand:
         autowire: true
         tags: ['console.command']
+    MakinaCorpus\Cron\Bridge\Symfony\Command\CronEnableCommand:
+        autowire: true
+        tags: ['console.command']
+    MakinaCorpus\Cron\Bridge\Symfony\Command\CronListCommand:
+        autowire: true
+        tags: ['console.command']
     MakinaCorpus\Cron\Bridge\Symfony\Command\CronRunCommand:
         autowire: true
         tags: ['console.command']
