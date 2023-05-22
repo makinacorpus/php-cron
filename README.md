@@ -269,3 +269,27 @@ bin/console cron:run my_cron_task_id
 ## Set a minimum interval
 
 Write me.
+
+# Running tests
+
+## Core tests
+
+Simply run PHPUnit:
+
+```sh
+composer install
+vendor/bin/phpunit
+```
+
+Database related tests will be skipped due to the lack of configuration.
+
+## Database related tests
+
+This uses docker compose for spawning a database environement:
+
+```sh
+cd sys/
+./run-test.sh
+```
+
+This is experimental, it should work.

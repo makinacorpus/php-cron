@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace MakinaCorpus\Cron\Bridge\Symfony\DependencyInjection;
 
 use Goat\Query\Symfony\GoatQueryBundle;
-use MakinaCorpus\Cron\Bridge\GoatQuery\GoatQueryTaskStateStore;
 use MakinaCorpus\Cron\TaskStateStore\ArrayTaskStateStore;
+use MakinaCorpus\Cron\TaskStateStore\GoatQueryTaskStateStore;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

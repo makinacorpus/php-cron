@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\Cron\Bridge\GoatQuery;
+namespace MakinaCorpus\Cron\TaskStateStore;
 
 use Goat\Driver\Error\TableDoesNotExistError;
 use Goat\Query\Expression\TableExpression;

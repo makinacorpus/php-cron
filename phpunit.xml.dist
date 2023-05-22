@@ -12,7 +12,8 @@
     <php>
         <ini name="error_reporting" value="-1" />
         <env name="ENABLE_EXT_PGSQL" value="1" />
-        <!-- <env name="PGSQL_95_URI" value="pgsql://gtd:gtd@192.168.57.103:5432/gtd" /> -->
+        <!-- <env name="GOAT_QUERY_URI" value="pgsql://gtd:gtd@192.168.57.103:5432/gtd" /> -->
+        <!-- <env name="PDO_URI" value="pgsql://gtd:gtd@192.168.57.103:5432/gtd" /> -->
     </php>
 
     <testsuites>

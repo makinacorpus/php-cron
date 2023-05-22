@@ -2,4 +2,5 @@
 /composer.lock
 /coverage
 /phpunit.xml
+/sys/composer.phar
 /vendor
